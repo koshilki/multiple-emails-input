@@ -108,10 +108,12 @@ class MultipleEmailsInput {
   }
 
   private getEmailBlocks(): Element[] {
-    return Array.from(this.el.children).filter(
-      (node: HTMLElement) =>
-        node.ELEMENT_NODE === 1 && (node as HTMLElement).tagName !== "INPUT"
-    );
+    return Array.prototype.slice
+      .call(this.el.children, 0)
+      .filter(
+        (node: HTMLElement) =>
+          node.ELEMENT_NODE === 1 && (node as HTMLElement).tagName !== "INPUT"
+      );
   }
 
   addEmail(content: string): void {
@@ -120,7 +122,7 @@ class MultipleEmailsInput {
     }
     this.el.insertBefore(this.createEmailBlock(content), this.input);
     this.input.focus();
-    this.input.scrollIntoView();
+    this.input.scrollIntoView(false);
 
     let event;
     if (typeof Event === "function") {
@@ -136,7 +138,7 @@ class MultipleEmailsInput {
     const emails: string[] = [];
     // get all email blocks (which match optional validity arg)
     // and extract email addresses
-    Array.from(this.el.childNodes).forEach((node) => {
+    Array.prototype.slice.call(this.el.childNodes, 0).forEach((node: Node) => {
       if (
         node.ELEMENT_NODE === 1 &&
         (node as HTMLElement).tagName !== "INPUT" &&

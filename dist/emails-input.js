@@ -89,7 +89,9 @@ var MultipleEmailsInput = /** @class */ (function () {
         this.el.dispatchEvent(event);
     };
     MultipleEmailsInput.prototype.getEmailBlocks = function () {
-        return Array.from(this.el.children).filter(function (node) {
+        return Array.prototype.slice
+            .call(this.el.children, 0)
+            .filter(function (node) {
             return node.ELEMENT_NODE === 1 && node.tagName !== "INPUT";
         });
     };
@@ -99,14 +101,22 @@ var MultipleEmailsInput = /** @class */ (function () {
         }
         this.el.insertBefore(this.createEmailBlock(content), this.input);
         this.input.focus();
-        this.input.scrollIntoView();
-        this.el.dispatchEvent(new Event("change"));
+        this.input.scrollIntoView(false);
+        var event;
+        if (typeof Event === "function") {
+            event = new Event("change");
+        }
+        else {
+            event = document.createEvent("Event");
+            event.initEvent("change", true, true);
+        }
+        this.el.dispatchEvent(event);
     };
     MultipleEmailsInput.prototype.getEmails = function (validity) {
         var emails = [];
         // get all email blocks (which match optional validity arg)
         // and extract email addresses
-        Array.from(this.el.childNodes).forEach(function (node) {
+        Array.prototype.slice.call(this.el.childNodes, 0).forEach(function (node) {
             if (node.ELEMENT_NODE === 1 &&
                 node.tagName !== "INPUT" &&
                 MultipleEmailsInput.matchValidity(validity, node)) {
