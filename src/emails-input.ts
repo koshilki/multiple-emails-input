@@ -64,7 +64,18 @@ class MultipleEmailsInput {
     });
 
     this.input.addEventListener("paste", (evt) => {
-      const pastedString = evt.clipboardData.getData("Text");
+      let pastedString = "";
+
+      if (
+        (window as any).clipboardData &&
+        (window as any).clipboardData.getData
+      ) {
+        // IE
+        pastedString = (window as any).clipboardData.getData("Text");
+      } else if (evt.clipboardData && evt.clipboardData.getData) {
+        pastedString = evt.clipboardData.getData("Text");
+      }
+
       pastedString.split(/[,\s;]/).forEach(this.addEmail.bind(this));
       event.preventDefault();
       this.input.value = "";
@@ -96,14 +107,24 @@ class MultipleEmailsInput {
 
   private removeEmailBlock(el: Element): void {
     this.el.removeChild(el);
-    this.el.dispatchEvent(new Event("change"));
+    let event;
+    if (typeof Event === "function") {
+      event = new Event("change");
+    } else {
+      event = document.createEvent("Event");
+      event.initEvent("change", true, true);
+    }
+
+    this.el.dispatchEvent(event);
   }
 
   private getEmailBlocks(): Element[] {
-    return Array.from(this.el.children).filter(
-      (node: HTMLElement) =>
-        node.ELEMENT_NODE === 1 && (node as HTMLElement).tagName !== "INPUT"
-    );
+    return Array.prototype.slice
+      .call(this.el.children, 0)
+      .filter(
+        (node: HTMLElement) =>
+          node.ELEMENT_NODE === 1 && (node as HTMLElement).tagName !== "INPUT"
+      );
   }
 
   addEmail(content: string): void {
@@ -112,15 +133,23 @@ class MultipleEmailsInput {
     }
     this.el.insertBefore(this.createEmailBlock(content), this.input);
     this.input.focus();
-    this.input.scrollIntoView();
-    this.el.dispatchEvent(new Event("change"));
+    this.input.scrollIntoView(false);
+
+    let event;
+    if (typeof Event === "function") {
+      event = new Event("change");
+    } else {
+      event = document.createEvent("Event");
+      event.initEvent("change", true, true);
+    }
+    this.el.dispatchEvent(event);
   }
 
   getEmails(validity: boolean | undefined): string[] {
     const emails: string[] = [];
     // get all email blocks (which match optional validity arg)
     // and extract email addresses
-    this.el.childNodes.forEach((node) => {
+    Array.prototype.slice.call(this.el.childNodes, 0).forEach((node: Node) => {
       if (
         node.ELEMENT_NODE === 1 &&
         (node as HTMLElement).tagName !== "INPUT" &&

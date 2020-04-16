@@ -50,7 +50,15 @@ var MultipleEmailsInput = /** @class */ (function () {
             _this.input.value = "";
         });
         this.input.addEventListener("paste", function (evt) {
-            var pastedString = evt.clipboardData.getData("Text");
+            var pastedString = "";
+            if (window.clipboardData &&
+                window.clipboardData.getData) {
+                // IE
+                pastedString = window.clipboardData.getData("Text");
+            }
+            else if (evt.clipboardData && evt.clipboardData.getData) {
+                pastedString = evt.clipboardData.getData("Text");
+            }
             pastedString.split(/[,\s;]/).forEach(_this.addEmail.bind(_this));
             event.preventDefault();
             _this.input.value = "";
@@ -78,10 +86,20 @@ var MultipleEmailsInput = /** @class */ (function () {
     };
     MultipleEmailsInput.prototype.removeEmailBlock = function (el) {
         this.el.removeChild(el);
-        this.el.dispatchEvent(new Event("change"));
+        var event;
+        if (typeof Event === "function") {
+            event = new Event("change");
+        }
+        else {
+            event = document.createEvent("Event");
+            event.initEvent("change", true, true);
+        }
+        this.el.dispatchEvent(event);
     };
     MultipleEmailsInput.prototype.getEmailBlocks = function () {
-        return Array.from(this.el.children).filter(function (node) {
+        return Array.prototype.slice
+            .call(this.el.children, 0)
+            .filter(function (node) {
             return node.ELEMENT_NODE === 1 && node.tagName !== "INPUT";
         });
     };
@@ -91,14 +109,22 @@ var MultipleEmailsInput = /** @class */ (function () {
         }
         this.el.insertBefore(this.createEmailBlock(content), this.input);
         this.input.focus();
-        this.input.scrollIntoView();
-        this.el.dispatchEvent(new Event("change"));
+        this.input.scrollIntoView(false);
+        var event;
+        if (typeof Event === "function") {
+            event = new Event("change");
+        }
+        else {
+            event = document.createEvent("Event");
+            event.initEvent("change", true, true);
+        }
+        this.el.dispatchEvent(event);
     };
     MultipleEmailsInput.prototype.getEmails = function (validity) {
         var emails = [];
         // get all email blocks (which match optional validity arg)
         // and extract email addresses
-        this.el.childNodes.forEach(function (node) {
+        Array.prototype.slice.call(this.el.childNodes, 0).forEach(function (node) {
             if (node.ELEMENT_NODE === 1 &&
                 node.tagName !== "INPUT" &&
                 MultipleEmailsInput.matchValidity(validity, node)) {

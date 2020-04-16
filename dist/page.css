@@ -34,6 +34,7 @@ body {
 }
 .content button {
   background-color: #4262ff;
+  border: 0;
   border-radius: 6px;
   box-sizing: border-box;
   color: #fff;
