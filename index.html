@@ -32,7 +32,7 @@
 
       document
         .getElementById("emails-input")
-        .addEventListener("change", (ev) => {
+        .addEventListener("change", function (ev) {
           document.getElementById("result").innerHTML =
             "Input value: <br>" + emailsInput.getEmails();
         });
