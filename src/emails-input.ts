@@ -121,7 +121,15 @@ class MultipleEmailsInput {
     this.el.insertBefore(this.createEmailBlock(content), this.input);
     this.input.focus();
     this.input.scrollIntoView();
-    this.el.dispatchEvent(new Event("change"));
+
+    let event;
+    if (typeof Event === "function") {
+      event = new Event("change");
+    } else {
+      event = document.createEvent("Event");
+      event.initEvent("change", true, true);
+    }
+    this.el.dispatchEvent(event);
   }
 
   getEmails(validity: boolean | undefined): string[] {
