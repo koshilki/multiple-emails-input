@@ -1,4 +1,3 @@
-"use strict";
 var PROCESS_EMAIL_ON_KEY = [",", "Enter"];
 var filterChars = {
     "<": "&lt;",
@@ -6,7 +5,6 @@ var filterChars = {
 };
 var MultipleEmailsInput = /** @class */ (function () {
     function MultipleEmailsInput(container) {
-        var _this = this;
         this.el = container;
         MultipleEmailsInput.setAttributes(this.el, {
             role: "textbox",
@@ -16,6 +14,19 @@ var MultipleEmailsInput = /** @class */ (function () {
         // text input
         this.input = this.createInputEl();
         this.el.appendChild(this.input);
+        this.addEventListeners();
+        return this;
+    }
+    MultipleEmailsInput.prototype.createInputEl = function () {
+        var input = document.createElement("input");
+        MultipleEmailsInput.setAttributes(input, {
+            type: "text",
+            placeholder: "add more people...",
+        });
+        return input;
+    };
+    MultipleEmailsInput.prototype.addEventListeners = function () {
+        var _this = this;
         // remove click listener
         this.el.addEventListener("click", function (ev) {
             if (ev.target.className === "remove") {
@@ -23,37 +34,27 @@ var MultipleEmailsInput = /** @class */ (function () {
             }
             _this.input.focus();
         });
-        return this;
-    }
-    MultipleEmailsInput.prototype.createInputEl = function () {
-        var _this = this;
-        var input = document.createElement("input");
-        MultipleEmailsInput.setAttributes(input, {
-            type: "text",
-            placeholder: "add more people...",
-        });
         // text input event listeners
-        input.addEventListener("keydown", function (evt) {
+        this.input.addEventListener("keydown", function (evt) {
             if (PROCESS_EMAIL_ON_KEY.indexOf(evt.key) > -1) {
-                _this.addEmail(MultipleEmailsInput.trimValue(input.value));
-                input.value = "";
+                _this.addEmail(MultipleEmailsInput.trimValue(_this.input.value));
+                _this.input.value = "";
                 evt.preventDefault();
             }
-            if (evt.key === "Backspace" && input.value === "") {
-                _this.removeEmailBlock(input.previousSibling);
+            if (evt.key === "Backspace" && _this.input.value === "") {
+                _this.removeEmailBlock(_this.input.previousSibling);
             }
         });
-        input.addEventListener("blur", function () {
-            _this.addEmail(input.value);
-            input.value = "";
+        this.input.addEventListener("blur", function () {
+            _this.addEmail(_this.input.value);
+            _this.input.value = "";
         });
-        input.addEventListener("paste", function (evt) {
+        this.input.addEventListener("paste", function (evt) {
             var pastedString = evt.clipboardData.getData("Text");
             pastedString.split(/[,\s;]/).forEach(_this.addEmail.bind(_this));
             event.preventDefault();
-            input.value = "";
+            _this.input.value = "";
         });
-        return input;
     };
     MultipleEmailsInput.prototype.createEmailBlock = function (value) {
         // block element
@@ -146,8 +147,4 @@ var MultipleEmailsInput = /** @class */ (function () {
 function EmailsInput(container) {
     return new MultipleEmailsInput(container);
 }
-module.exports = {
-    EmailsInput: EmailsInput,
-    MultipleEmailsInput: MultipleEmailsInput,
-};
 //# sourceMappingURL=emails-input.js.map
