@@ -1,9 +1,12 @@
 .emails-input {
+  $background-color: #fff;
   $border-color: #c3c2cf;
   $input-placeholder-text-color: #c3c2cf;
   $email-block-valid-background-color: rgba(102, 153, 255, .2);
   $email-block-invalid-highlight-color: #d92929;
+  $email-block-text-color: #050038;
 
+  background-color: $background-color;
   border: 1px solid $border-color;
   border-radius: 4px;
   box-sizing: border-box;
@@ -26,6 +29,7 @@
   }
 
   .email {
+    color: $email-block-text-color;
     display: inline-block;
     font-size: 14px;
     line-height: 24px;
@@ -37,7 +41,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    &.valid {
+    &[valid='true'] {
       background-color: $email-block-valid-background-color;
       border-radius: 24px;
       padding-left: 10px;
@@ -46,6 +50,7 @@
     button {
       background: none;
       border: 0;
+      color: $email-block-text-color;
       cursor: pointer;
       font-size: 18px;
       font-weight: 300;
@@ -55,7 +60,7 @@
       right: 8px;
     }
 
-    &.invalid {
+    &[valid='false'] {
       border-bottom: 1px dashed $email-block-invalid-highlight-color;
       padding-right: 14px;
 

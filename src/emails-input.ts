@@ -7,111 +7,122 @@ const filterChars = {
 class MultipleEmailsInput {
   emails: string[];
   el: HTMLElement;
-  input: HTMLElement;
+  input: HTMLInputElement;
 
-  constructor() {
-    this.el = document.createElement("div");
-    this.setAttributes(this.el, {
-      class: "emails-input",
+  constructor(container: HTMLElement) {
+    this.el = container;
+    MultipleEmailsInput.setAttributes(this.el, {
       role: "textbox",
+      "aria-multiline": "true",
     });
+    this.el.className = this.el.className + " emails-input";
+
+    // text input
     this.input = this.createInputEl();
     this.el.appendChild(this.input);
+
+    this.addEventListeners();
+
+    return this;
+  }
+
+  private createInputEl(): HTMLInputElement {
+    const input = document.createElement("input");
+    MultipleEmailsInput.setAttributes(input, {
+      type: "text",
+      placeholder: "add more people...",
+    });
+    return input;
+  }
+
+  private addEventListeners(): void {
+    // remove click listener
     this.el.addEventListener("click", (ev) => {
       if ((ev.target as HTMLElement).className === "remove") {
         this.removeEmailBlock((ev.target as HTMLElement).parentElement);
       }
       this.input.focus();
     });
-    return this;
-  }
 
-  createInputEl(): HTMLInputElement {
-    const input = document.createElement("input");
-    this.setAttributes(input, {
-      type: "text",
-      placeholder: "add more people...",
-    });
-    input.addEventListener("keydown", (evt) => {
+    // text input event listeners
+    this.input.addEventListener("keydown", (evt) => {
       if (PROCESS_EMAIL_ON_KEY.indexOf(evt.key) > -1) {
-        this.addEmailToList(this.trimValue(input.value));
-        input.value = "";
+        this.addEmail(MultipleEmailsInput.trimValue(this.input.value));
+        this.input.value = "";
         evt.preventDefault();
       }
-      if (evt.key === "Backspace" && input.value === "") {
-        this.removeEmailBlock(input.previousSibling as Element);
+      if (evt.key === "Backspace" && this.input.value === "") {
+        this.removeEmailBlock(this.input.previousSibling as Element);
       }
     });
-    input.addEventListener("blur", () => {
-      this.addEmailToList(input.value);
-      input.value = "";
+
+    this.input.addEventListener("blur", () => {
+      this.addEmail(this.input.value);
+      this.input.value = "";
     });
-    input.addEventListener("paste", (evt) => {
+
+    this.input.addEventListener("paste", (evt) => {
       const pastedString = evt.clipboardData.getData("Text");
-      pastedString.split(/[,\s;]/).forEach(this.addEmailToList.bind(this));
+      pastedString.split(/[,\s;]/).forEach(this.addEmail.bind(this));
       event.preventDefault();
-      input.value = "";
+      this.input.value = "";
     });
-    return input;
   }
 
-  createEmailBlock(value: string): HTMLElement {
+  private createEmailBlock(value: string): HTMLElement {
+    // block element
     const block = document.createElement("span");
-    const sanitized = this.filterInput(value);
-    this.setAttributes(block, {
-      class: `email ${this.isValidEmail(value) ? "valid" : "invalid"}`,
+    const sanitized = MultipleEmailsInput.filterInput(value);
+    MultipleEmailsInput.setAttributes(block, {
+      class: "email",
       "data-value": sanitized,
+      valid: MultipleEmailsInput.isValidEmail(value),
     });
+
+    // remove button
     const removeBtn = document.createElement("button");
-    this.setAttributes(removeBtn, {
+    MultipleEmailsInput.setAttributes(removeBtn, {
       class: "remove",
+      "aria-label": "remove",
     });
     removeBtn.innerHTML = "&times;";
     block.innerHTML = sanitized;
     block.appendChild(removeBtn);
+
     return block;
   }
 
-  removeEmailBlock(el: Element): void {
+  private removeEmailBlock(el: Element): void {
     this.el.removeChild(el);
+    this.el.dispatchEvent(new Event("change"));
   }
 
-  getEmailBlocks(): Element[] {
+  private getEmailBlocks(): Element[] {
     return Array.from(this.el.children).filter(
       (node: HTMLElement) =>
         node.ELEMENT_NODE === 1 && (node as HTMLElement).tagName !== "INPUT"
     );
   }
 
-  isValidEmail(value: string): boolean {
-    return /^[^@]+@[^\.]+\..+$/.test(value);
-  }
-
-  setAttributes(el: HTMLElement, attrs: object): void {
-    Object.entries(attrs).map(([key, value]) => el.setAttribute(key, value));
-  }
-
-  trimValue(value: string): string {
-    return value.trim().replace(/,$/, "");
-  }
-
-  addEmailToList(content: string): void {
+  addEmail(content: string): void {
     if (content.length === 0) {
       return;
     }
-    // this.el.appendChild(this.createEmailBlock(content));
     this.el.insertBefore(this.createEmailBlock(content), this.input);
     this.input.focus();
     this.input.scrollIntoView();
     this.el.dispatchEvent(new Event("change"));
   }
 
-  getEmails(): string[] {
+  getEmails(validity: boolean | undefined): string[] {
     const emails: string[] = [];
+    // get all email blocks (which match optional validity arg)
+    // and extract email addresses
     this.el.childNodes.forEach((node) => {
       if (
         node.ELEMENT_NODE === 1 &&
-        (node as HTMLElement).tagName !== "INPUT"
+        (node as HTMLElement).tagName !== "INPUT" &&
+        MultipleEmailsInput.matchValidity(validity, node as HTMLElement)
       ) {
         emails.push((node as HTMLElement).getAttribute("data-value"));
       }
@@ -122,10 +133,35 @@ class MultipleEmailsInput {
   replaceEmails(value: string | string[]): void {
     const emails = !Array.isArray(value) ? (value as string).split(",") : value;
     this.getEmailBlocks().forEach((el) => this.removeEmailBlock(el));
-    emails.forEach(this.addEmailToList.bind(this));
+    emails.forEach(this.addEmail.bind(this));
   }
 
-  filterInput(value: string): string {
+  private static matchValidity(
+    validity: boolean | undefined,
+    el: HTMLElement
+  ): boolean {
+    if (validity === undefined) {
+      return true;
+    }
+    return el.getAttribute("valid") === String(validity);
+  }
+
+  // Utility methods
+  private static isValidEmail(value: string): boolean {
+    // very basic validation, but should be sufficient in this case
+    return /^[^@]+@[^\.]+\..+$/.test(value);
+  }
+
+  private static setAttributes(el: HTMLElement, attrs: object): void {
+    // convenience method to set multiple attributes at once
+    Object.entries(attrs).map(([key, value]) => el.setAttribute(key, value));
+  }
+
+  private static trimValue(value: string): string {
+    return value.trim().replace(/,$/, "");
+  }
+
+  private static filterInput(value: string): string {
     let str = value;
     Object.entries(filterChars).forEach(
       ([char, sub]) => (str = str.replace(RegExp(char, "g"), sub))
@@ -134,11 +170,6 @@ class MultipleEmailsInput {
   }
 }
 
-function EmailsInput(
-  container: HTMLElement,
-  { ...options }
-): MultipleEmailsInput {
-  const input = new MultipleEmailsInput();
-  container.appendChild(input.el);
-  return input;
+function EmailsInput(container: HTMLElement): MultipleEmailsInput {
+  return new MultipleEmailsInput(container);
 }
