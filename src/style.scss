@@ -1,0 +1,67 @@
+.emails-input {
+  $border-color: #c3c2cf;
+  $input-placeholder-text-color: #c3c2cf;
+  $email-block-valid-background-color: rgba(102, 153, 255, .2);
+  $email-block-invalid-highlight-color: #d92929;
+
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14px;
+  height: 100%;
+  overflow: scroll;
+  padding: 6px 3px;
+  width: 100%;
+
+  input {
+    border: 0;
+    font-size: 14px;
+    padding: 4px;
+    vertical-align: top;
+
+    ::placeholder {
+      color: $input-placeholder-text-color;
+    }
+  }
+
+  .email {
+    display: inline-block;
+    font-size: 14px;
+    line-height: 24px;
+    margin: 2px 4px;
+    max-width: calc(100% - 40px);
+    overflow: hidden;
+    padding-right: 24px;
+    position: relative;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &.valid {
+      background-color: $email-block-valid-background-color;
+      border-radius: 24px;
+      padding-left: 10px;
+    }
+
+    button {
+      background: none;
+      border: 0;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 300;
+      margin-left: 5px;
+      padding: 0;
+      position: absolute;
+      right: 8px;
+    }
+
+    &.invalid {
+      border-bottom: 1px dashed $email-block-invalid-highlight-color;
+      padding-right: 14px;
+
+      button {
+        right: 0;
+      }
+    }
+  }
+}

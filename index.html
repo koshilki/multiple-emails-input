@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Emails input test (Miro)</title>
+    <link rel="stylesheet" href="dist/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- form header -->
+    <div id="emails-input"></div>
+
+    <div id="emails-input2"></div>
+    <!-- form footer, buttons -->
+    <script src="dist/emails-input.js"></script>
+    <script>
+      var options = {};
+      var emailsInput = EmailsInput(document.querySelector("#emails-input"), {
+        ...options,
+      });
+      emailsInput.el.addEventListener("change", (ev) => {
+        console.log(emailsInput.getEmails());
+      });
+      var emailsInput2 = EmailsInput(document.querySelector("#emails-input2"), {
+        ...options,
+      });
+      emailsInput2.el.addEventListener("change", (ev) => {
+        console.log(emailsInput2.getEmails());
+      });
+      // Handling Add email and Get emails count buttons, etc.
+    </script>
+    <style>
+      #emails-input {
+        width: 440px;
+        height: 96px;
+      }
+    </style>
+  </body>
+</html>
