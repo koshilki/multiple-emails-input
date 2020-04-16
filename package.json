@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch": "concurrently --raw 'sass src:dist --watch' 'tsc -w'",
+    "watch": "concurrently --raw 'sass src:docs/dist --watch' 'tsc -w'",
     "build": "npm run build-ts && npm run build-sass",
-    "build-ts": "tsc",
-    "build-sass": "sass src:dist -s compressed"
+    "build-ts": "tsc ",
+    "build-sass": "sass src:docs/dist -s compressed"
   },
   "keywords": [],
   "author": "",

@@ -5,7 +5,7 @@
     "noImplicitAny": true,
     "moduleResolution": "classic",
     "sourceMap": true,
-    "outDir": "dist",
+    "outDir": "docs/dist",
     "lib": ["es2019", "DOM"],
     "baseUrl": "."
   },
