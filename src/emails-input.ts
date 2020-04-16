@@ -1,8 +1,10 @@
 const PROCESS_EMAIL_ON_KEY = [",", "Enter"];
-const filterChars = {
+const filterChars: { [key: string]: string } = {
   "<": "&lt;",
   ">": "&gt;",
 };
+
+type Attributes = { [key: string]: string };
 
 class MultipleEmailsInput {
   emails: string[];
@@ -76,7 +78,7 @@ class MultipleEmailsInput {
     MultipleEmailsInput.setAttributes(block, {
       class: "email",
       "data-value": sanitized,
-      valid: MultipleEmailsInput.isValidEmail(value),
+      valid: MultipleEmailsInput.isValidEmail(value).toString(),
     });
 
     // remove button
@@ -152,9 +154,9 @@ class MultipleEmailsInput {
     return /^[^@]+@[^\.]+\..+$/.test(value);
   }
 
-  private static setAttributes(el: HTMLElement, attrs: object): void {
+  private static setAttributes(el: HTMLElement, attrs: Attributes): void {
     // convenience method to set multiple attributes at once
-    Object.entries(attrs).map(([key, value]) => el.setAttribute(key, value));
+    Object.keys(attrs).map((key) => el.setAttribute(key, attrs[key]));
   }
 
   private static trimValue(value: string): string {
@@ -163,8 +165,8 @@ class MultipleEmailsInput {
 
   private static filterInput(value: string): string {
     let str = value;
-    Object.entries(filterChars).forEach(
-      ([char, sub]) => (str = str.replace(RegExp(char, "g"), sub))
+    Object.keys(filterChars).forEach(
+      (char) => (str = str.replace(RegExp(char, "g"), filterChars[char]))
     );
     return str;
   }

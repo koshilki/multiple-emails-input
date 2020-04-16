@@ -9,5 +9,6 @@
     "lib": ["es2019", "DOM"],
     "baseUrl": "."
   },
+  "browserslist": ["IE 11"],
   "include": ["src/*"]
 }
