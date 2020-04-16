@@ -96,7 +96,15 @@ class MultipleEmailsInput {
 
   private removeEmailBlock(el: Element): void {
     this.el.removeChild(el);
-    this.el.dispatchEvent(new Event("change"));
+    let event;
+    if (typeof Event === "function") {
+      event = new Event("change");
+    } else {
+      event = document.createEvent("Event");
+      event.initEvent("change", true, true);
+    }
+
+    this.el.dispatchEvent(event);
   }
 
   private getEmailBlocks(): Element[] {
@@ -120,7 +128,7 @@ class MultipleEmailsInput {
     const emails: string[] = [];
     // get all email blocks (which match optional validity arg)
     // and extract email addresses
-    this.el.childNodes.forEach((node) => {
+    Array.from(this.el.childNodes).forEach((node) => {
       if (
         node.ELEMENT_NODE === 1 &&
         (node as HTMLElement).tagName !== "INPUT" &&
