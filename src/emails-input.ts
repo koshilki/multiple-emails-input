@@ -66,17 +66,16 @@ class MultipleEmailsInput {
     this.input.addEventListener("paste", (evt) => {
       let pastedString = "";
 
-      if (evt.clipboardData && evt.clipboardData.getData) {
-        if (
-          (window as any).clipboardData &&
-          (window as any).clipboardData.getData
-        ) {
-          // IE
-          pastedString = (window as any).clipboardData.getData("Text");
-        } else if (evt.clipboardData && evt.clipboardData.getData) {
-          pastedString = evt.clipboardData.getData("text/plain");
-        }
+      if (
+        (window as any).clipboardData &&
+        (window as any).clipboardData.getData
+      ) {
+        // IE
+        pastedString = (window as any).clipboardData.getData("Text");
+      } else if (evt.clipboardData && evt.clipboardData.getData) {
+        pastedString = evt.clipboardData.getData("Text");
       }
+
       pastedString.split(/[,\s;]/).forEach(this.addEmail.bind(this));
       event.preventDefault();
       this.input.value = "";

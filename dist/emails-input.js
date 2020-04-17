@@ -51,15 +51,13 @@ var MultipleEmailsInput = /** @class */ (function () {
         });
         this.input.addEventListener("paste", function (evt) {
             var pastedString = "";
-            if (evt.clipboardData && evt.clipboardData.getData) {
-                if (window.clipboardData &&
-                    window.clipboardData.getData) {
-                    // IE
-                    pastedString = window.clipboardData.getData("Text");
-                }
-                else if (evt.clipboardData && evt.clipboardData.getData) {
-                    pastedString = evt.clipboardData.getData("text/plain");
-                }
+            if (window.clipboardData &&
+                window.clipboardData.getData) {
+                // IE
+                pastedString = window.clipboardData.getData("Text");
+            }
+            else if (evt.clipboardData && evt.clipboardData.getData) {
+                pastedString = evt.clipboardData.getData("Text");
             }
             pastedString.split(/[,\s;]/).forEach(_this.addEmail.bind(_this));
             event.preventDefault();
