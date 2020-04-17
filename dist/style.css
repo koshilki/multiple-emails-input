@@ -1,4 +1,5 @@
 .emails-input {
+  -ms-overflow-style: -ms-autohiding-scrollbar;
   background-color: #fff;
   border: 1px solid #c3c2cf;
   border-radius: 4px;
