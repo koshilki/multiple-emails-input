@@ -8,39 +8,62 @@ Input element for multiple emails.
 
 ## Usage
 
+#### Load script
+
+```html
+<script src="dist/emails-input.js"></script>
+```
+
+#### Instantiate
+
 ```html
 <div id="emails-input"></div>
-
-<script src="dist/emails-input.js"></script>
 <script>
-  // instantiate
   const emailsInput = EmailsInput(document.getElementById("emails-input"));
-
-  // subscribe for changes
-  document
-    .getElementById("emails-input")
-    .addEventListener("change", function (ev) {
-      console.log(emailsInput.getEmails());
-    });
-
-  // programmatically add email to the list
-  emailsInput.addEmail("someone@somewhere.com");
-
-  // get all valid emails
-  console.log(emailsInput.getEmails(true));
-
-  // get all invalid entries
-  console.log(emailsInput.getEmails(false));
-
-  // or all entries - both valid and invalid
-  console.log(emailsInput.getEmails());
-
-  // replace all the entries in the input
-  emailsInput.replaceEmails([
-    "someone@somewhere.com",
-    "someone.else@somewhere.com",
-  ]);
-  // or
-  emailsInput.replaceEmails("someone@somewhere.com,someone.else@somewhere.com");
 </script>
+```
+
+#### Subscribe to changes
+
+```js
+document
+  .getElementById("emails-input")
+  .addEventListener("change", function (ev) {
+    console.log(emailsInput.getEmails());
+  });
+```
+
+#### Programmatically add email to the list
+
+```js
+emailsInput.addEmail("someone@somewhere.com");
+```
+
+#### Get all valid emails
+
+```js
+const validEmails = emailsInput.getEmails(true);
+```
+
+#### Get all invalid entries
+
+```js
+const invalidEmails = emailsInput.getEmails(false);
+```
+
+#### Get all entries - both valid and invalid
+
+```js
+const allEntries = emailsInput.getEmails();
+```
+
+#### Replace all the entries in the input
+
+```js
+emailsInput.replaceEmails([
+  "someone@somewhere.com",
+  "someone.else@somewhere.com",
+]);
+// or
+emailsInput.replaceEmails("someone@somewhere.com,someone.else@somewhere.com");
 ```
