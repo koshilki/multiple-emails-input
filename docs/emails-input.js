@@ -41,7 +41,9 @@ var MultipleEmailsInput = /** @class */ (function () {
                 _this.input.value = "";
                 evt.preventDefault();
             }
-            if (evt.key === "Backspace" && _this.input.value === "") {
+            if (evt.key === "Backspace" &&
+                _this.input.value === "" &&
+                _this.input.previousSibling) {
                 _this.removeEmailBlock(_this.input.previousSibling);
             }
         });
