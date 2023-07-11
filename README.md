@@ -2,7 +2,7 @@
 
 Input element for multiple emails.
 
-![Multiple emails input screenshot](https://koshilki.github.com/multiple-emails-input/assets/example.png)
+![Multiple emails input screenshot](https://koshilki.github.io/multiple-emails-input/assets/example.png)
 
 [live demo](https://koshilki.github.io/multiple-emails-input/index.html)
 
