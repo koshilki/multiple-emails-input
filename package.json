@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "watch": "concurrently --raw 'sass src:dist --watch' 'tsc -w'",
-    "build": "npm run build-ts && npm run build-sass && npm run copy-index",
+    "build": "npm run build-ts && npm run build-sass && npm run copy-assets",
     "build-ts": "tsc ",
     "build-sass": "sass src:dist -s compressed",
-    "copy-index": "cp src/index.html dist"
+    "copy-assets": "cp src/index.html dist && cp -r assets dist"
   },
   "keywords": [],
   "author": "",
